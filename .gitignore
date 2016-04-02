@@ -23,6 +23,7 @@
 # Gradle:
 # .idea/gradle.xml
 # .idea/libraries
+/src/main/resources/db/*.sql
 
 # Mongo Explorer plugin:
 # .idea/mongoSettings.xml
