@@ -1,6 +1,8 @@
 package lan.dk.podcastserver.config;
 
 import lan.dk.podcastserver.batch.reader.*;
+import lan.dk.podcastserver.batch.tasklet.BackupDb;
+import lan.dk.podcastserver.batch.tasklet.ResetDb;
 import lan.dk.podcastserver.batch.writer.*;
 import lan.dk.podcastserver.entity.*;
 import org.springframework.batch.core.Job;
@@ -8,7 +10,6 @@ import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
-import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.item.database.JdbcPagingItemReader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -28,11 +29,8 @@ public class BatchConfiguration {
     public StepBuilderFactory stepBuilderFactory;
 
     @Bean
-    public Job migrationOfId(Step resetDbStep, Step coverStep, Step podcastStep, Step itemStep, Step tagStep, Step podcastsTagsStep, Step watchListStep, Step watchListsItemsStep) {
+    public Job migrationOfId(Step resetDbStep, Step coverStep, Step podcastStep, Step itemStep, Step tagStep, Step podcastsTagsStep, Step watchListStep, Step watchListsItemsStep, Step backupDbStep) {
         return jobBuilderFactory.get("migrationOfId")
-                /*.incrementer(new RunIdIncrementer())*/
-                /*.listener(listener())*/
-                /*.flow(podcastStep)*/
                 .start(resetDbStep)
                 .next(coverStep)
                 .next(podcastStep)
@@ -41,15 +39,12 @@ public class BatchConfiguration {
                 .next(podcastsTagsStep)
                 .next(watchListStep)
                 .next(watchListsItemsStep)
-                /*
-                .next(coverStep)
-                .end()
-                */
+                .next(backupDbStep)
                 .build();
     }
 
     @Bean
-    public Step resetDbStep(Tasklet resetDbTasklet) {
+    public Step resetDbStep(ResetDb resetDbTasklet) {
         return stepBuilderFactory.get("resetDbStep")
                 .tasklet(resetDbTasklet)
                 .build();
@@ -115,6 +110,13 @@ public class BatchConfiguration {
                 .<WatchListsItems, WatchListsItems> chunk(100)
                 .reader(reader)
                 .writer(writer)
+                .build();
+    }
+
+    @Bean
+    public Step backupDbStep(BackupDb backupDb) {
+        return stepBuilderFactory.get("backupdb")
+                .tasklet(backupDb)
                 .build();
     }
 
