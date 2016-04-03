@@ -34,10 +34,7 @@ public class PodcastWriter implements ItemWriter<Podcast> {
         podcasts
                 .stream()
                 .map(podcastMapping::add)
-                .forEach(this::save)
-        ;
-
-        log.info("{} elements in mapping store", podcastMapping.map.size());
+                .forEach(this::save);
     }
 
     private void save(Podcast p) {

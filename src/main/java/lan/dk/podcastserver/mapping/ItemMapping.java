@@ -11,7 +11,7 @@ public class ItemMapping extends AbstractMapping<Item> {
 
     @Override
     public Item add(Item cover) {
-        map.put(cover.getOldId(), cover.getId());
+        map.put(cover.oldId(), cover.id());
         return cover;
     }
 

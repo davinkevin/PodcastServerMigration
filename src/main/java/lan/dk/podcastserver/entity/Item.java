@@ -1,6 +1,5 @@
 package lan.dk.podcastserver.entity;
 
-import com.google.common.collect.Sets;
 import lombok.*;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
@@ -8,15 +7,13 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import java.nio.file.Path;
-import java.time.ZonedDateTime;
-import java.util.Set;
 import java.util.UUID;
 
 /*@Entity*/
 @Slf4j
 @Builder
-@Getter @Setter
-@Accessors(chain = true)
+@Getter
+@Accessors(chain = true, fluent = true)
 @NoArgsConstructor @AllArgsConstructor
 public class Item {
 
@@ -28,18 +25,19 @@ public class Item {
     private Long oldId;
     private UUID id;
     private String title;
-    private Cover cover;
-    private Podcast podcast;
     private String url;
-    private ZonedDateTime pubdate;
     private String description;
     private String mimeType;
     private Long length;
     private String fileName;
-    private ZonedDateTime downloadDate;
     private Status status = Status.NOT_DOWNLOADED;
-    private ZonedDateTime creationDate;
-    private Set<WatchList> watchLists = Sets.newHashSet();
+
+    private UUID podcast;
+    private UUID cover;
+
+    private String pubdate;
+    private String creationDate;
+    private String downloadDate;
 
     @Override
     public boolean equals(Object o) {
@@ -63,7 +61,7 @@ public class Item {
     public int hashCode() {
         return new HashCodeBuilder(17, 37)
                 .append(url)
-                .append((pubdate != null) ? pubdate.toInstant() : null)
+                .append((pubdate != null) ? pubdate : null)
                 .toHashCode();
     }
 

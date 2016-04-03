@@ -1,6 +1,8 @@
 package lan.dk.podcastserver.entity;
 
 
+import static java.util.Objects.isNull;
+
 /**
  * Created by kevin on 18/02/15.
  */
@@ -13,7 +15,7 @@ public enum Status {
     PAUSED;
 
     public static Status of(String value) {
-        return Status.valueOf(value);
+        return isNull(value) ? NOT_DOWNLOADED : Status.valueOf(value);
     }
     
 }

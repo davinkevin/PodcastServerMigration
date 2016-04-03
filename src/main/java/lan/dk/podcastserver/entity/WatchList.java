@@ -1,10 +1,8 @@
 package lan.dk.podcastserver.entity;
 
-import com.google.common.collect.Sets;
 import lombok.*;
 import lombok.experimental.Accessors;
 
-import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -12,16 +10,11 @@ import java.util.UUID;
  */
 /*@Entity*/
 @Builder
-@Getter @Setter
+@Getter
 @NoArgsConstructor
 @AllArgsConstructor
-@Accessors(chain = true)
+@Accessors(fluent = true)
 public class WatchList {
-
-    /*@Id
-    @GeneratedValue(generator = "uuid2")
-    @GenericGenerator(name = "uuid2", strategy = "uuid2")*/
     private UUID id;
     private String name;
-    private /*@ManyToMany*/ Set<Item> items = Sets.newHashSet();
 }

@@ -1,10 +1,8 @@
 package lan.dk.podcastserver.config;
 
-import lan.dk.podcastserver.batch.reader.CoverReader;
-import lan.dk.podcastserver.batch.writer.CoverWriter;
-import lan.dk.podcastserver.batch.writer.PodcastWriter;
-import lan.dk.podcastserver.entity.Cover;
-import lan.dk.podcastserver.entity.Podcast;
+import lan.dk.podcastserver.batch.reader.*;
+import lan.dk.podcastserver.batch.writer.*;
+import lan.dk.podcastserver.entity.*;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
@@ -30,7 +28,7 @@ public class BatchConfiguration {
     public StepBuilderFactory stepBuilderFactory;
 
     @Bean
-    public Job migrationOfId(Step resetDbStep, Step coverStep, Step podcastStep) {
+    public Job migrationOfId(Step resetDbStep, Step coverStep, Step podcastStep, Step itemStep, Step tagStep, Step podcastsTagsStep, Step watchListStep, Step watchListsItemsStep) {
         return jobBuilderFactory.get("migrationOfId")
                 /*.incrementer(new RunIdIncrementer())*/
                 /*.listener(listener())*/
@@ -38,6 +36,11 @@ public class BatchConfiguration {
                 .start(resetDbStep)
                 .next(coverStep)
                 .next(podcastStep)
+                .next(itemStep)
+                .next(tagStep)
+                .next(podcastsTagsStep)
+                .next(watchListStep)
+                .next(watchListsItemsStep)
                 /*
                 .next(coverStep)
                 .end()
@@ -55,9 +58,18 @@ public class BatchConfiguration {
     @Bean
     public Step podcastStep(JdbcPagingItemReader<Podcast> podcastReader, PodcastWriter podcastWriter) {
         return stepBuilderFactory.get("podcast")
-                .<Podcast, Podcast> chunk(10)
+                .<Podcast, Podcast> chunk(100)
                 .reader(podcastReader)
                 .writer(podcastWriter)
+                .build();
+    }
+
+    @Bean
+    public Step itemStep(JdbcPagingItemReader<Item> itemReader, PodcastItemWriter itemWriter) {
+        return stepBuilderFactory.get("item")
+                .<Item, Item> chunk(100)
+                .reader(itemReader)
+                .writer(itemWriter)
                 .build();
     }
 
@@ -67,6 +79,42 @@ public class BatchConfiguration {
                 .<Cover, Cover> chunk(100)
                 .reader(coverReader)
                 .writer(coverWriter)
+                .build();
+    }
+
+    @Bean
+    public Step tagStep(TagReader tagReader, TagWriter tagWriter) {
+        return stepBuilderFactory.get("tag")
+                .<Tag, Tag> chunk(100)
+                .reader(tagReader)
+                .writer(tagWriter)
+                .build();
+    }
+
+    @Bean
+    public Step podcastsTagsStep(PodcastsTagsReader reader, PodcastsTagsWriter writer) {
+        return stepBuilderFactory.get("podcastsTags")
+                .<PodcastsTags, PodcastsTags> chunk(100)
+                .reader(reader)
+                .writer(writer)
+                .build();
+    }
+
+    @Bean
+    public Step watchListStep(WatchListReader reader, WatchListWriter writer) {
+        return stepBuilderFactory.get("watchList")
+                .<WatchList, WatchList> chunk(100)
+                .reader(reader)
+                .writer(writer)
+                .build();
+    }
+
+    @Bean
+    public Step watchListsItemsStep(WatchListsItemsReader reader, WatchListsItemsWriter writer) {
+        return stepBuilderFactory.get("watchListsItems")
+                .<WatchListsItems, WatchListsItems> chunk(100)
+                .reader(reader)
+                .writer(writer)
                 .build();
     }
 

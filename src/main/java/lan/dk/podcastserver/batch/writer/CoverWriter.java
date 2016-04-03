@@ -33,10 +33,7 @@ public class CoverWriter implements ItemWriter<Cover> {
         covers
             .stream()
             .map(coverMapping::add)
-            .forEach(this::save)
-        ;
-
-        log.info("{} elements in mapping store", coverMapping.map.size());
+            .forEach(this::save);
     }
 
     private void save(Cover c) {
