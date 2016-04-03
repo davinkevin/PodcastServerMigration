@@ -20,15 +20,9 @@ import java.util.UUID;
 @Accessors(chain = true)
 public class Tag {
 
-    /*@Id
-    @GeneratedValue(generator = "uuid2")
-    @GenericGenerator(name = "uuid2", strategy = "uuid2")*/
+    private Long oldId;
     private UUID id;
-
-    /*@Column(unique = true)*/
     private String name;
-
-    /*@ManyToMany(mappedBy = "tags")*/
     private Set<Podcast> podcasts = Sets.newHashSet();
 
     @Override

@@ -1,15 +1,17 @@
 package lan.dk.podcastserver.config;
 
-import lan.dk.podcastserver.batch.reader.PodcastReader;
+import lan.dk.podcastserver.batch.reader.CoverReader;
+import lan.dk.podcastserver.batch.writer.CoverWriter;
 import lan.dk.podcastserver.batch.writer.PodcastWriter;
+import lan.dk.podcastserver.entity.Cover;
 import lan.dk.podcastserver.entity.Podcast;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
-import org.springframework.batch.core.repository.JobRepository;
-import org.springframework.batch.core.repository.support.MapJobRepositoryFactoryBean;
+import org.springframework.batch.core.step.tasklet.Tasklet;
+import org.springframework.batch.item.database.JdbcPagingItemReader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -28,17 +30,30 @@ public class BatchConfiguration {
     public StepBuilderFactory stepBuilderFactory;
 
     @Bean
-    public Job importUserJob(Step step1) {
-        return jobBuilderFactory.get("migrationId")
+    public Job migrationOfId(Step resetDbStep, Step coverStep, Step podcastStep) {
+        return jobBuilderFactory.get("migrationOfId")
                 /*.incrementer(new RunIdIncrementer())*/
                 /*.listener(listener())*/
-                .flow(step1)
+                /*.flow(podcastStep)*/
+                .start(resetDbStep)
+                .next(coverStep)
+                .next(podcastStep)
+                /*
+                .next(coverStep)
                 .end()
+                */
                 .build();
     }
 
     @Bean
-    public Step step1(PodcastReader podcastReader, PodcastWriter podcastWriter) {
+    public Step resetDbStep(Tasklet resetDbTasklet) {
+        return stepBuilderFactory.get("resetDbStep")
+                .tasklet(resetDbTasklet)
+                .build();
+    }
+
+    @Bean
+    public Step podcastStep(JdbcPagingItemReader<Podcast> podcastReader, PodcastWriter podcastWriter) {
         return stepBuilderFactory.get("podcast")
                 .<Podcast, Podcast> chunk(10)
                 .reader(podcastReader)
@@ -47,8 +62,12 @@ public class BatchConfiguration {
     }
 
     @Bean
-    JobRepository jobRepository () throws Exception {
-        return new MapJobRepositoryFactoryBean().getObject();
+    public Step coverStep(CoverReader coverReader, CoverWriter coverWriter) {
+        return stepBuilderFactory.get("cover")
+                .<Cover, Cover> chunk(100)
+                .reader(coverReader)
+                .writer(coverWriter)
+                .build();
     }
 
 }

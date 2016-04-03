@@ -1,54 +1,33 @@
 package lan.dk.podcastserver.entity;
 
 
-import com.google.common.collect.Sets;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
-import java.time.ZonedDateTime;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.UUID;
 
 /*@Entity*/
 @Builder
-@Getter @Setter
-@Accessors(chain = true)
+@Getter
+@Accessors(chain = true, fluent = true)
 @NoArgsConstructor @AllArgsConstructor
 public class Podcast {
 
-    public static final Podcast DEFAULT_PODCAST = new Podcast();
-
-    /*@Id
-    @GeneratedValue(generator = "uuid2")
-    @GenericGenerator(name = "uuid2", strategy = "uuid2")*/
+    private Long oldId;
     private UUID id;
-
     private String title;
-
-    /*@Column(length = 65535)*/
     private String url;
     private String signature;
     private String type;
-    private ZonedDateTime lastUpdate;
-
-    /*@OneToMany(mappedBy = "podcast", fetch = FetchType.LAZY, cascade=CascadeType.ALL, orphanRemoval=true)
-    @OrderBy("pubdate DESC")
-    @Fetch(FetchMode.SUBSELECT)*/
-    private Set<Item> items = new HashSet<>();
-
-    /*@OneToOne(fetch = FetchType.EAGER, cascade={CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH}, orphanRemoval=true)*/
-    private Cover cover;
-
-    /*@Column(length = 65535 )*/
+    private String lastUpdate;
+    private UUID cover;
     private String description;
     private Boolean hasToBeDeleted;
-
-    /*@ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.EAGER)
-    @Fetch(FetchMode.SUBSELECT)*/
-    private Set<Tag> tags = Sets.newHashSet();
 
     @Override
     public String toString() {

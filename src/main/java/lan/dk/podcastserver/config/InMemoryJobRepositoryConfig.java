@@ -1,13 +1,15 @@
 package lan.dk.podcastserver.config;
 
-import org.springframework.batch.core.explore.JobExplorer;
-import org.springframework.batch.core.explore.support.SimpleJobExplorer;
-import org.springframework.batch.core.launch.support.SimpleJobLauncher;
-import org.springframework.batch.core.repository.JobRepository;
-import org.springframework.batch.core.repository.support.MapJobRepositoryFactoryBean;
-import org.springframework.batch.support.transaction.ResourcelessTransactionManager;
+import org.springframework.batch.core.configuration.annotation.BatchConfigurer;
+import org.springframework.batch.core.configuration.annotation.DefaultBatchConfigurer;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
+import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
+import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
+
+import javax.sql.DataSource;
 
 /**
  * Created by kevin on 02/04/2016 for PodcastServerMigration
@@ -16,35 +18,16 @@ import org.springframework.context.annotation.Configuration;
 public class InMemoryJobRepositoryConfig {
 
     @Bean
-    public ResourcelessTransactionManager transactionManager() {
-        return new ResourcelessTransactionManager();
+    BatchConfigurer configurer(@Qualifier("batchDataSource") DataSource dataSource){
+        return new DefaultBatchConfigurer(dataSource);
     }
 
     @Bean
-    public MapJobRepositoryFactoryBean mapJobRepositoryFactory(ResourcelessTransactionManager txManager) throws Exception {
-        return new MapJobRepositoryFactoryBean(txManager);
+    @Primary
+    DataSource batchDataSource() {
+        return new EmbeddedDatabaseBuilder()
+                .setType(EmbeddedDatabaseType.H2)
+                .setName("batchDataSource")
+                .build();
     }
-
-    @Bean
-    public JobRepository jobRepository(MapJobRepositoryFactoryBean factory) throws Exception {
-        return factory.getObject();
-    }
-
-    @Bean
-    public JobExplorer jobExplorer(MapJobRepositoryFactoryBean factory) {
-        return new SimpleJobExplorer(
-                factory.getJobInstanceDao(),
-                factory.getJobExecutionDao(),
-                factory.getStepExecutionDao(),
-                factory.getExecutionContextDao()
-        );
-    }
-
-    @Bean
-    public SimpleJobLauncher jobLauncher(JobRepository jobRepository) {
-        SimpleJobLauncher launcher = new SimpleJobLauncher();
-        launcher.setJobRepository(jobRepository);
-        return launcher;
-    }
-
 }

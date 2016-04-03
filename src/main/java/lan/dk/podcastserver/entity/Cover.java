@@ -10,15 +10,12 @@ import java.util.UUID;
 
 /*@Entity*/
 @Builder
-@Setter @Getter
-@NoArgsConstructor
+@Getter
 @AllArgsConstructor
-@Accessors(chain = true)
+@Accessors(fluent = true)
 public class Cover {
 
-  /*  @Id
-    @GeneratedValue(generator = "uuid2")
-    @GenericGenerator(name = "uuid2", strategy = "uuid2")*/
+    private Long oldId;
     private UUID id;
     private String url;
     private Integer width;
@@ -40,5 +37,16 @@ public class Cover {
         return new HashCodeBuilder(17, 37)
                 .append(StringUtils.lowerCase(url))
                 .toHashCode();
+    }
+
+    @Override
+    public String toString() {
+        return "Cover{" +
+                "height=" + height +
+                ", width=" + width +
+                ", url='" + url + '\'' +
+                ", id=" + id +
+                ", oldId=" + oldId +
+                '}';
     }
 }

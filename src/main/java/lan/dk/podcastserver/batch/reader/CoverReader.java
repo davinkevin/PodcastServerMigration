@@ -1,7 +1,6 @@
 package lan.dk.podcastserver.batch.reader;
 
-import lan.dk.podcastserver.entity.Podcast;
-import lan.dk.podcastserver.mapping.CoverMapping;
+import lan.dk.podcastserver.entity.Cover;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.item.database.JdbcPagingItemReader;
 import org.springframework.batch.item.database.support.SqlPagingQueryProviderFactoryBean;
@@ -18,19 +17,16 @@ import java.util.UUID;
  */
 @Slf4j
 @Service
-public class PodcastReader extends JdbcPagingItemReader<Podcast> {
-
-    final CoverMapping coverMapping;
+public class CoverReader extends JdbcPagingItemReader<Cover> {
 
     @Autowired
-    public PodcastReader(@Qualifier("input") DataSource input, CoverMapping coverMapping) throws Exception {
-        this.coverMapping = coverMapping;
+    public CoverReader(@Qualifier("input") DataSource input) throws Exception {
         SqlPagingQueryProviderFactoryBean pqp = new SqlPagingQueryProviderFactoryBean();
 
         pqp.setDatabaseType("H2");
         pqp.setDataSource(input);
         pqp.setSelectClause("SELECT *");
-        pqp.setFromClause("FROM PODCAST");
+        pqp.setFromClause("FROM COVER");
         pqp.setSortKey("ID");
 
         this.setDataSource(input);
@@ -39,18 +35,14 @@ public class PodcastReader extends JdbcPagingItemReader<Podcast> {
         this.setRowMapper(rowMapper());
     }
 
-    private RowMapper<Podcast> rowMapper() {
-        return (rs, rowNum) -> Podcast.builder()
-                .oldId(rs.getLong("ID"))
-                .id(UUID.randomUUID())
-                .title(rs.getString("title"))
-                .url(rs.getString("url"))
-                .signature(rs.getString("signature"))
-                .type(rs.getString("type"))
-                .description(rs.getString("description"))
-                .hasToBeDeleted(rs.getBoolean("HAS_TO_BE_DELETED"))
-                .lastUpdate(rs.getString("LAST_UPDATE"))
-                .cover(coverMapping.of(rs.getLong("COVER_ID")))
+    private RowMapper<Cover> rowMapper() {
+        return (rs, rowNum) -> Cover
+                .builder()
+                    .id(UUID.randomUUID())
+                    .oldId(rs.getLong("id"))
+                    .height(rs.getInt("height"))
+                    .width(rs.getInt("width"))
+                    .url(rs.getString("url"))
                 .build();
     }
 

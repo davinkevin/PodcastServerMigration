@@ -5,7 +5,6 @@ import lombok.*;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import java.nio.file.Path;
@@ -26,37 +25,20 @@ public class Item {
     public  static final Item DEFAULT_ITEM = new Item();
     private static final String PROXY_URL = "/api/podcast/%s/items/%s/download%s";
 
-  /*  @Id
-    @GeneratedValue(generator = "uuid2")
-    @GenericGenerator(name = "uuid2", strategy = "uuid2")*/
+    private Long oldId;
     private UUID id;
     private String title;
-
-    /*@OneToOne(fetch = FetchType.EAGER, cascade=CascadeType.ALL, orphanRemoval=true)*/
     private Cover cover;
-
-    /*@ManyToOne(cascade={CascadeType.MERGE}, fetch = FetchType.EAGER)*/
     private Podcast podcast;
-
-    /*@Column(length = 65535, unique = true)*/
     private String url;
-
     private ZonedDateTime pubdate;
-
-    /*@Column(length = 65535)*/
     private String description;
     private String mimeType;
     private Long length;
     private String fileName;
     private ZonedDateTime downloadDate;
-
-    /*@Enumerated(EnumType.STRING)*/
     private Status status = Status.NOT_DOWNLOADED;
-
-    /*@CreatedDate*/
     private ZonedDateTime creationDate;
-
-    /*@ManyToMany(mappedBy = "items", cascade = CascadeType.REFRESH)*/
     private Set<WatchList> watchLists = Sets.newHashSet();
 
     @Override
@@ -74,7 +56,7 @@ public class Item {
             return url.equals(item.url) || FilenameUtils.getName(item.url).equals(FilenameUtils.getName(url));
         }
 
-        return StringUtils.equals(getLocalUrl(), item.getLocalUrl());
+        return false;
     }
 
     @Override
@@ -100,13 +82,4 @@ public class Item {
                 ", podcast=" + podcast +
                 '}';
     }
-
-    /* Helpers */
-    /*@Transient*/
-    private String getLocalUrl() {
-        return (fileName == null)
-                ? null
-                : fileContainer + "/" + podcast.getTitle() + fileName;
-    }
-
 }
