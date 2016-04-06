@@ -1,0 +1,3 @@
+migration :
+    input : /tmp/input.sql
+    output: /tmp/output.sql

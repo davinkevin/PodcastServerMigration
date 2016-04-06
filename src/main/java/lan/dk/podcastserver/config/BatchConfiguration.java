@@ -1,8 +1,9 @@
 package lan.dk.podcastserver.config;
 
 import lan.dk.podcastserver.batch.reader.*;
-import lan.dk.podcastserver.batch.tasklet.BackupDb;
-import lan.dk.podcastserver.batch.tasklet.ResetDb;
+import lan.dk.podcastserver.batch.tasklet.BackupOutputDb;
+import lan.dk.podcastserver.batch.tasklet.LoadInputDb;
+import lan.dk.podcastserver.batch.tasklet.LoadSchemaOutput;
 import lan.dk.podcastserver.batch.writer.*;
 import lan.dk.podcastserver.entity.*;
 import org.springframework.batch.core.Job;
@@ -10,6 +11,7 @@ import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
+import org.springframework.batch.core.configuration.xml.SimpleFlowFactoryBean;
 import org.springframework.batch.item.database.JdbcPagingItemReader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -29,26 +31,36 @@ public class BatchConfiguration {
     public StepBuilderFactory stepBuilderFactory;
 
     @Bean
-    public Job migrationOfId(Step resetDbStep, Step coverStep, Step podcastStep, Step itemStep, Step tagStep, Step podcastsTagsStep, Step watchListStep, Step watchListsItemsStep, Step backupDbStep) {
+    public Job migrationOfId(Step initInputDbStep, Step initOutputDbStep, Step coverStep, Step podcastStep, Step itemStep, Step tagStep, Step podcastsTagsStep, Step watchListStep, Step watchListsItemsStep, Step backupDbStep) {
         return jobBuilderFactory.get("migrationOfId")
-                .start(resetDbStep)
-                .next(coverStep)
-                .next(podcastStep)
-                .next(itemStep)
-                .next(tagStep)
-                .next(podcastsTagsStep)
-                .next(watchListStep)
-                .next(watchListsItemsStep)
-                .next(backupDbStep)
+                .start(initInputDbStep)
+                    .next(initOutputDbStep)
+                    .next(coverStep)
+                    .next(podcastStep)
+                    .next(itemStep)
+                    .next(tagStep)
+                    .next(podcastsTagsStep)
+                    .next(watchListStep)
+                    .next(watchListsItemsStep)
+                    .next(backupDbStep)
                 .build();
     }
 
     @Bean
-    public Step resetDbStep(ResetDb resetDbTasklet) {
-        return stepBuilderFactory.get("resetDbStep")
-                .tasklet(resetDbTasklet)
+    public Step initInputDbStep(LoadInputDb loadInputDb) {
+        return stepBuilderFactory.get("initInputDbStep")
+                .tasklet(loadInputDb)
                 .build();
     }
+
+    @Bean
+    public Step initOutputDbStep(LoadSchemaOutput loadSchemaOutput) {
+        return stepBuilderFactory.get("initOutputDbStep")
+                .tasklet(loadSchemaOutput)
+                .build();
+    }
+
+
 
     @Bean
     public Step podcastStep(JdbcPagingItemReader<Podcast> podcastReader, PodcastWriter podcastWriter) {
@@ -114,9 +126,9 @@ public class BatchConfiguration {
     }
 
     @Bean
-    public Step backupDbStep(BackupDb backupDb) {
+    public Step backupDbStep(BackupOutputDb backupOutputDb) {
         return stepBuilderFactory.get("backupdb")
-                .tasklet(backupDb)
+                .tasklet(backupOutputDb)
                 .build();
     }
 

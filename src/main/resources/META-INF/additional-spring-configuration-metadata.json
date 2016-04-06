@@ -1,0 +1,14 @@
+{
+  "properties": [
+    {
+      "name": "migration .input ",
+      "type": "java.io.File",
+      "description": "Description for migration .input ."
+    },
+    {
+      "name": "migration .output",
+      "type": "java.io.File",
+      "description": "Description for migration .output."
+    }
+  ]
+}
