@@ -18,7 +18,7 @@ import java.util.List;
 @Service
 public class PodcastItemWriter implements ItemWriter<Item> {
 
-    private static final String INSERT = "INSERT INTO ITEM (ID, TITLE, URL, DESCRIPTION, MIMETYPE, LENGTH, FILE_NAME, STATUS, PODCAST_ID, COVER_ID, PUBDATE, CREATION_DATE, DOWNLOAD_DATE) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
+    private static final String INSERT = "INSERT INTO ITEM (ID, TITLE, URL, DESCRIPTION, MIME_TYPE, LENGTH, FILE_NAME, STATUS, PODCAST_ID, COVER_ID, PUB_DATE, CREATION_DATE, DOWNLOAD_DATE) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
 
     private final ItemMapping itemMapping;
     private final JdbcTemplate jdbcTemplate;
@@ -40,7 +40,7 @@ public class PodcastItemWriter implements ItemWriter<Item> {
     private void save(Item i) {
         jdbcTemplate.update(
                 INSERT,
-                i.id(), i.title(), i.url(), i.description(), i.mimeType(), i.length(), i.fileName(), i.status().toString(), i.podcast(), i.cover(), i.pubdate(), i.creationDate(), i.downloadDate()
+                i.id(), i.title(), i.url(), i.description(), i.mimeType(), i.length(), i.fileName(), i.status().toString(), i.podcast(), i.cover(), i.pubDate(), i.creationDate(), i.downloadDate()
         );
     }
 }

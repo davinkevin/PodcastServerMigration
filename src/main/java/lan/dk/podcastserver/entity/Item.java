@@ -35,7 +35,7 @@ public class Item {
     private UUID podcast;
     private UUID cover;
 
-    private String pubdate;
+    private String pubDate;
     private String creationDate;
     private String downloadDate;
 
@@ -61,7 +61,7 @@ public class Item {
     public int hashCode() {
         return new HashCodeBuilder(17, 37)
                 .append(url)
-                .append((pubdate != null) ? pubdate : null)
+                .append((pubDate != null) ? pubDate : null)
                 .toHashCode();
     }
 
@@ -71,7 +71,7 @@ public class Item {
                 "id=" + id +
                 ", title='" + title + '\'' +
                 ", url='" + url + '\'' +
-                ", pubdate=" + pubdate +
+                ", pubDate=" + pubDate +
                 ", description='" + description + '\'' +
                 ", mimeType='" + mimeType + '\'' +
                 ", length=" + length +

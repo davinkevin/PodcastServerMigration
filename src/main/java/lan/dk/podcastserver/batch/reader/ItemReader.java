@@ -58,7 +58,7 @@ public class ItemReader extends JdbcPagingItemReader<Item> {
                 .cover(coverMapping.of(rs.getLong("COVER_ID")))
                 .podcast(podcastMapping.of(rs.getLong("PODCAST_ID")))
 
-                .pubdate(rs.getString("PUBDATE"))
+                .pubDate(rs.getString("PUBDATE"))
                 .creationDate(rs.getString("CREATION_DATE"))
                 .downloadDate(rs.getString("DOWNLOAD_DATE"))
 
