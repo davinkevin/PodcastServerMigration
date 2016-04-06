@@ -22,7 +22,7 @@ public class DataSourceConfig {
 
         dataSource.setDriverClassName("org.h2.Driver");
         /*dataSource.setJdbcUrl("jdbc:h2:mem:input;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=false;INIT=DROP ALL OBJECTS\\; RUNSCRIPT FROM 'classpath:db/input.sql'");*/
-        dataSource.setJdbcUrl("jdbc:h2:tcp://localhost:9092//tmp/input");
+        dataSource.setJdbcUrl("jdbc:h2:mem:input");
         dataSource.setUsername("sa");
         dataSource.setPassword("");
 
@@ -35,7 +35,8 @@ public class DataSourceConfig {
 
         dataSource.setDriverClassName("org.h2.Driver");
         /*dataSource.setJdbcUrl("jdbc:h2:tcp://localhost:9092//tmp/output;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=false;INIT=DROP ALL OBJECTS\\; RUNSCRIPT FROM 'classpath:db/output.sql'");*/
-        dataSource.setJdbcUrl("jdbc:h2:tcp://localhost:9092//tmp/output");
+        /*dataSource.setJdbcUrl("jdbc:h2:tcp://localhost:9092//tmp/output");*/
+        dataSource.setJdbcUrl("jdbc:h2:mem:output");
         dataSource.setUsername("sa");
         dataSource.setPassword("");
 
