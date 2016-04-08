@@ -2,6 +2,7 @@ package lan.dk.podcastserver.batch.reader;
 
 import lan.dk.podcastserver.entity.WatchListsItems;
 import lan.dk.podcastserver.mapping.ItemMapping;
+import lan.dk.podcastserver.utils.UUIDUtils;
 import org.springframework.batch.item.database.JdbcPagingItemReader;
 import org.springframework.batch.item.database.support.SqlPagingQueryProviderFactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +41,7 @@ public class WatchListsItemsReader extends JdbcPagingItemReader<WatchListsItems>
     private RowMapper<WatchListsItems> rowMapper() {
         return (rs, rowNum) -> WatchListsItems.builder()
                     .item(itemMapping.of(rs.getLong("ITEMS_ID")))
-                    .watchList(WatchListReader.asUUID(rs, "WATCH_LISTS_ID"))
+                    .watchList(UUIDUtils.binaryToUUID(rs, "WATCH_LISTS_ID"))
                 .build();
     }
 

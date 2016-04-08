@@ -9,6 +9,11 @@
       "name": "migration .output",
       "type": "java.io.File",
       "description": "Description for migration .output."
+    },
+    {
+      "name": "migration .domain",
+      "type": "java.lang.String",
+      "description": "Description for migration .domain."
     }
   ]
 }

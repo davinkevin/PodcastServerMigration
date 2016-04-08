@@ -19,6 +19,7 @@ import java.util.UUID;
 @Service
 public class CoverReader extends JdbcPagingItemReader<Cover> {
 
+
     @Autowired
     public CoverReader(@Qualifier("input") DataSource input) throws Exception {
         SqlPagingQueryProviderFactoryBean pqp = new SqlPagingQueryProviderFactoryBean();

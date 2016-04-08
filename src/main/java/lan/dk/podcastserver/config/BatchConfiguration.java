@@ -5,13 +5,13 @@ import lan.dk.podcastserver.batch.tasklet.BackupOutputDb;
 import lan.dk.podcastserver.batch.tasklet.LoadInputDb;
 import lan.dk.podcastserver.batch.tasklet.LoadSchemaOutput;
 import lan.dk.podcastserver.batch.writer.*;
+import lan.dk.podcastserver.bean.CoverIdUrl;
 import lan.dk.podcastserver.entity.*;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
-import org.springframework.batch.core.configuration.xml.SimpleFlowFactoryBean;
 import org.springframework.batch.item.database.JdbcPagingItemReader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -31,7 +31,7 @@ public class BatchConfiguration {
     public StepBuilderFactory stepBuilderFactory;
 
     @Bean
-    public Job migrationOfId(Step initInputDbStep, Step initOutputDbStep, Step coverStep, Step podcastStep, Step itemStep, Step tagStep, Step podcastsTagsStep, Step watchListStep, Step watchListsItemsStep, Step backupDbStep) {
+    public Job migrationOfId(Step initInputDbStep, Step initOutputDbStep, Step coverStep, Step podcastStep, Step itemStep, Step tagStep, Step podcastsTagsStep, Step watchListStep, Step watchListsItemsStep, Step backupDbStep, Step changeCoverUrlStep) {
         return jobBuilderFactory.get("migrationOfId")
                 .start(initInputDbStep)
                     .next(initOutputDbStep)
@@ -42,6 +42,7 @@ public class BatchConfiguration {
                     .next(podcastsTagsStep)
                     .next(watchListStep)
                     .next(watchListsItemsStep)
+                    .next(changeCoverUrlStep)
                     .next(backupDbStep)
                 .build();
     }
@@ -120,6 +121,15 @@ public class BatchConfiguration {
     public Step watchListsItemsStep(WatchListsItemsReader reader, WatchListsItemsWriter writer) {
         return stepBuilderFactory.get("watchListsItems")
                 .<WatchListsItems, WatchListsItems> chunk(100)
+                .reader(reader)
+                .writer(writer)
+                .build();
+    }
+
+    @Bean
+    public Step changeCoverUrlStep(CoverUrlReader reader, CoverUrlWriter writer) {
+        return stepBuilderFactory.get("changeCoverUrl")
+                .<CoverIdUrl, CoverIdUrl> chunk(100)
                 .reader(reader)
                 .writer(writer)
                 .build();
