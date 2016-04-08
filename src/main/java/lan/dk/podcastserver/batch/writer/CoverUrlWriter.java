@@ -30,12 +30,10 @@ public class CoverUrlWriter implements ItemWriter<CoverIdUrl> {
     public void write(List<? extends CoverIdUrl> covers) throws Exception {
         covers
             .stream()
-                .peek(c -> log.info("nouvelle url {}", c.url()))
                 .forEach(this::save);
     }
 
     private void save(CoverIdUrl c) {
-        int update = jdbcTemplate.update(UPDATE, c.url(), c.id().toString());
-        log.info("Number of update : {}", update);
+        jdbcTemplate.update(UPDATE, c.url(), c.id().toString());
     }
 }

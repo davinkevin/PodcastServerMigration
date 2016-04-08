@@ -39,7 +39,7 @@ public class CoverUrlReader extends JdbcPagingItemReader<CoverIdUrl> {
 
         this.setDataSource(output);
         this.setQueryProvider(pqp.getObject());
-        this.setPageSize(100);
+        this.setPageSize(9999);
         this.setRowMapper(rowMapper());
     }
 
